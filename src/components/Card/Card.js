@@ -2,16 +2,22 @@ import React from 'react'
 import './Card.scss'
 
 function Card(props) {
-    const { card } = props
-    return (
-        <>
-            <li className="card-item">
-                {card.cover && <img className="card-cover" src={card.cover} alt="phucng-alt" />}
+  const { card } = props
+  return (
+    <>
+      <div className="card-item">
+        {card.cover &&
+          <img
+            className="card-cover"
+            src={card.cover}
+            onMouseDown={(e) => e.preventDefault()}
+            alt="phucng-alt" />
+        }
 
-                {card.title}
-            </li>
-        </>
-    );
+        {card.title}
+      </div>
+    </>
+  )
 }
 
-export default Card;
+export default Card
