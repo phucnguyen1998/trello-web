@@ -4,6 +4,7 @@ import { isEmpty } from 'lodash'
 import './BoardContent.scss'
 
 import { mapOrder } from 'utilities/sort'
+import { applyDrag } from 'utilities/dragDrop'
 import Column from 'components/Column/Column'
 import { initialData } from 'actions/initialData'
 
@@ -28,7 +29,28 @@ function BoardContent() {
   }
 
   const onColumnDrop = (dropResult) => {
-    console.log(dropResult)
+    let newCollumns = [...columns]
+    newCollumns = applyDrag(newCollumns, dropResult)
+
+    let newBoard = { ...board }
+    newBoard.columnsOrder = newCollumns.map(c => c.id)
+    newBoard.columns = newCollumns
+
+    setColumns(newCollumns)
+    setBoard(newBoard)
+  }
+
+  const onCardDrop = (columnId, dropResult) => {
+    if (dropResult.removedIndex !== null || dropResult.addedIndex !== null) {
+      let newCollumns = [...columns]
+
+      let currentColumn = newCollumns.find(c => c.id === columnId)
+
+      currentColumn.cards = applyDrag(currentColumn.cards, dropResult)
+      currentColumn.cardOrder = currentColumn.cards.map(i => i.id)
+
+      setColumns(newCollumns)
+    }
   }
 
   return (
@@ -47,10 +69,14 @@ function BoardContent() {
         >
           {columns.map((column, index) => (
             <Draggable key={index.toString()}>
-              <Column column={column} />
+              <Column column={column} onCardDrop={onCardDrop} />
             </Draggable>
           ))}
         </Container>
+        <div className='add-new-column'>
+          <i className="fa fa-plus icon" />
+          Add another column
+        </div>
       </div>
     </>
   )
